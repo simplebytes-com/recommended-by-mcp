@@ -1,0 +1,51 @@
+{
+  "name": "recommended-by-mcp",
+  "version": "0.1.0",
+  "description": "Stdio MCP server for managing recommended.by lists from agents like OpenClaw, Codex, Claude, and Cursor.",
+  "type": "module",
+  "bin": {
+    "recommended-by-mcp": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "!dist/*.test.js",
+    "!dist/*.test.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepack": "pnpm build",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test dist/*.test.js"
+  },
+  "keywords": [
+    "recommended.by",
+    "mcp",
+    "openclaw",
+    "codex",
+    "claude",
+    "cursor",
+    "recommendations"
+  ],
+  "author": "simple bytes",
+  "license": "MIT",
+  "homepage": "https://recommended.by/guides",
+  "bugs": {
+    "url": "https://github.com/simplebytes-com/recommended-by-mcp/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simplebytes-com/recommended-by-mcp.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "typescript": "^5"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
