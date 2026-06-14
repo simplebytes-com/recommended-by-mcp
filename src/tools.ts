@@ -54,6 +54,37 @@ const itemInputProperties = {
   },
 };
 
+const itemSearchInputProperties = {
+  title: { type: "string", description: "Search title or place/business name." },
+  subtitle: {
+    type: "string",
+    description:
+      "Optional disambiguator, such as author, artist, city, address, or location context.",
+  },
+  limit: { type: "number", default: 5 },
+};
+
+const itemCandidateProperties = {
+  source: {
+    type: "string",
+    enum: ["google-books", "open-library", "itunes", "google-places", "tvdb"],
+  },
+  sourceId: { type: "string" },
+  title: { type: "string" },
+  subtitle: { type: "string" },
+  description: { type: "string" },
+  url: { type: "string" },
+  imageUrl: { type: "string" },
+  previewUrl: { type: "string" },
+  previewImageUrl: { type: "string" },
+  confirmationUrl: {
+    type: "string",
+    description: "URL to show the user when confirming this exact candidate.",
+  },
+  confidence: { type: "string", enum: ["exact", "likely", "possible"] },
+  metadata: { type: "object" },
+};
+
 export const tools: ToolDefinition[] = [
   {
     name: "recommended_list_lists",
@@ -107,6 +138,40 @@ export const tools: ToolDefinition[] = [
       type: "object",
       properties: { listId: { type: "string" } },
       required: ["listId"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "recommended_search_items",
+    description:
+      "Search source candidates before adding an item. Use this for ambiguous books, places, podcasts, music, movies, and TV. For places, show confirmationUrl and previewImageUrl to the user before adding.",
+    inputSchema: {
+      type: "object",
+      properties: { listId: { type: "string" }, ...itemSearchInputProperties },
+      required: ["listId", "title"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "recommended_add_item_from_result",
+    description:
+      "Add an item from a previously returned recommended_search_items candidate. This avoids first-result auto-selection.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        listId: { type: "string" },
+        candidate: {
+          type: "object",
+          properties: itemCandidateProperties,
+          required: ["source", "sourceId", "title"],
+          additionalProperties: true,
+        },
+        description: {
+          type: "string",
+          description: "Optional note to override the candidate description.",
+        },
+      },
+      required: ["listId", "candidate"],
       additionalProperties: false,
     },
   },
@@ -182,6 +247,28 @@ export async function callTool(client: ApiClient, name: string, args: unknown) {
   if (name === "recommended_list_items") {
     const listId = getRequiredString(input, "listId");
     return textResult(await client.request("GET", `/lists/${encodeURIComponent(listId)}/items`));
+  }
+
+  if (name === "recommended_search_items") {
+    const listId = getRequiredString(input, "listId");
+    return textResult(
+      await client.request(
+        "POST",
+        `/lists/${encodeURIComponent(listId)}/item-search`,
+        withoutKeys(input, "listId")
+      )
+    );
+  }
+
+  if (name === "recommended_add_item_from_result") {
+    const listId = getRequiredString(input, "listId");
+    return textResult(
+      await client.request(
+        "POST",
+        `/lists/${encodeURIComponent(listId)}/items/from-result`,
+        withoutKeys(input, "listId")
+      )
+    );
   }
 
   if (name === "recommended_add_item") {

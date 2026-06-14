@@ -58,9 +58,13 @@ npx recommended-by-mcp@latest whoami
 - `recommended_update_list`
 - `recommended_delete_list`
 - `recommended_list_items`
+- `recommended_search_items`
+- `recommended_add_item_from_result`
 - `recommended_add_item`
 - `recommended_update_item`
 - `recommended_delete_item`
+
+Use `recommended_search_items` before adding ambiguous books, places, podcasts, music, movies, or TV. It returns candidates with stable `sourceId` values plus preview fields. For Google Places candidates, show `confirmationUrl` and `previewImageUrl` to the user before calling `recommended_add_item_from_result`.
 
 ## Client Examples
 

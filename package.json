@@ -1,6 +1,6 @@
 {
   "name": "recommended-by-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Stdio MCP server for managing recommended.by lists from agents like OpenClaw, Codex, Claude, and Cursor.",
   "type": "module",
   "bin": {
